@@ -37,16 +37,32 @@ app.get("/series/:id", async (req, res) => {
 
 //POST
 app.post("/series", async (req, res) => {
-  const { name, description, image_url } = req.body;
+  try {
+    console.log("REQUEST HIT");
 
-  const result = await pool.query(
-    "INSERT INTO series(name, description, image_url) VALUES($1,$2,$3) RETURNING *",
-    [name, description, image_url]
-  );
+    const { name, description, image_url } = req.body;
 
-  res.status(201).json(result.rows[0]);
+    console.log("BODY:", req.body);
+
+    if (!name) {
+      console.log("THE NAME IS MISSING");
+      return res.status(400).json({ error: "Name is REQUIRED" });
+    }
+
+    const result = await pool.query(
+      "INSERT INTO series(name, description, image_url) VALUES($1,$2,$3) RETURNING *",
+      [name, description, image_url]
+    );
+
+    console.log("INSERT WAS SUCCESSFULL");
+
+    res.status(201).json(result.rows[0]);
+
+  } catch (err) {
+    console.error("💥 FULL ERROR:", err);
+    res.status(500).json({ error: err.message });
+  }
 });
-
 //Put
 app.put("/series/:id", async (req, res) => {
   const { name, description, image_url } = req.body;
