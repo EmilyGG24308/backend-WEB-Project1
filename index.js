@@ -14,6 +14,7 @@ const pool = new Pool({
   port: 5432,
 });
 
+
 // ALLL SERIES (get)
 app.get("/series", async (req, res) => {
   const result = await pool.query("SELECT * FROM series");
