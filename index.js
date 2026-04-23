@@ -16,9 +16,21 @@ const pool = new Pool({
 
 
 // ALLL SERIES (get)
+
 app.get("/series", async (req, res) => {
-  const result = await pool.query("SELECT * FROM series");
-  res.json(result.rows);
+  try {
+    const result = await pool.query(
+      "SELECT id, name, description, image_url, rating, genre1, genre2 FROM series"
+    );
+
+    console.log("SENDING:", result.rows);
+
+    return res.json(result.rows); 
+
+  } catch (err) {
+    console.error(err);
+    return res.status(500).json({ error: err.message });
+  }
 });
 
 
@@ -41,7 +53,8 @@ app.post("/series", async (req, res) => {
   try {
     console.log("REQUEST HIT");
 
-    const { name, description, image_url } = req.body;
+    const { name, description, image_url, rating, genre1, genre2 } = req.body;
+    const ratingValue=rating? Number(rating) : null;
 
     console.log("BODY:", req.body);
 
@@ -51,8 +64,8 @@ app.post("/series", async (req, res) => {
     }
 
     const result = await pool.query(
-      "INSERT INTO series(name, description, image_url) VALUES($1,$2,$3) RETURNING *",
-      [name, description, image_url]
+      "INSERT INTO series(name, description, image_url, rating, genre1, genre2) VALUES($1,$2,$3,$4,$5,$6) RETURNING *",
+      [name, description, image_url, ratingValue, genre1, genre2]
     );
 
     console.log("INSERT WAS SUCCESSFULL");
@@ -60,17 +73,18 @@ app.post("/series", async (req, res) => {
     res.status(201).json(result.rows[0]);
 
   } catch (err) {
-    console.error("💥 FULL ERROR:", err);
+    console.error(" FULL ERROR:", err);
     res.status(500).json({ error: err.message });
   }
 });
 //Put
 app.put("/series/:id", async (req, res) => {
-  const { name, description, image_url } = req.body;
+  const { name, description, image_url, rating, genre1, genre2 } = req.body;
+  const ratingValue=rating? Number(rating) : null;
 
   const result = await pool.query(
-    "UPDATE series SET name=$1, description=$2, image_url=$3 WHERE id=$4 RETURNING *",
-    [name, description, image_url, req.params.id]
+    "UPDATE series SET name=$1, description=$2, image_url=$3, rating=$4, genre1=$5, genre2=$6 WHERE id=$7 RETURNING *",
+    [name, description, image_url, ratingValue, genre1, genre2, req.params.id]
   );
 
   res.json(result.rows[0]);
