@@ -19,17 +19,23 @@ const pool = new Pool({
 
 app.get("/series", async (req, res) => {
   try {
-    const {q}=req.query;
-    let query = "SELECT id, name, description, image_url, rating, genre1, genre2 FROM series ";
-    
-    let values = [];
+    const {q, sort = "id", order= "asc"}=req.query;
+    const validSortFields = ["id", "name", "rating"];
+    const validOrders = ["asc", "desc"];
 
+    const sortField = validSortFields.includes(sort) ? sort : "id";
+    const sortOrder = validOrders.includes(order.toLowerCase()) ? order : "asc";
+    
+    let query = "SELECT id, name, description, image_url, rating, genre1, genre2 FROM series ";
+
+    let values = [];
+  
     //search by name
     if (q){
       query +="WHERE name ILIKE $1";
       values.push(`%${q}%`);
     }
-
+    query += ` ORDER BY ${sortField} ${sortOrder.toUpperCase()}`;
     const result = await pool.query(query, values);
   
     console.log("SENDING:", result.rows);
