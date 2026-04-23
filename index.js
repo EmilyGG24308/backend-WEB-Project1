@@ -19,13 +19,22 @@ const pool = new Pool({
 
 app.get("/series", async (req, res) => {
   try {
-    const result = await pool.query(
-      "SELECT id, name, description, image_url, rating, genre1, genre2 FROM series"
-    );
+    const {q}=req.query;
+    let query = "SELECT id, name, description, image_url, rating, genre1, genre2 FROM series ";
+    
+    let values = [];
 
+    //search by name
+    if (q){
+      query +="WHERE name ILIKE $1";
+      values.push(`%${q}%`);
+    }
+
+    const result = await pool.query(query, values);
+  
     console.log("SENDING:", result.rows);
 
-    return res.json(result.rows); 
+    return res.status(200).json(result.rows); 
 
   } catch (err) {
     console.error(err);
