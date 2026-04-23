@@ -163,7 +163,7 @@ app.delete("/series/:id", async (req, res) => {
     return res.status(404).json({ error: "Not found" });
   }
 
-  res.json(result.rows[0]);
+  res.status(204).send();
 });
 
 
