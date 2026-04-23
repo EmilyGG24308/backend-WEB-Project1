@@ -77,18 +77,83 @@ app.post("/series", async (req, res) => {
     res.status(500).json({ error: err.message });
   }
 });
+
 //Put
 app.put("/series/:id", async (req, res) => {
+  console.log("BODY RECEIVED:", req.body);
+
+  const {id}=req.params;
   const { name, description, image_url, rating, genre1, genre2 } = req.body;
-  const ratingValue=rating? Number(rating) : null;
+  
 
-  const result = await pool.query(
-    "UPDATE series SET name=$1, description=$2, image_url=$3, rating=$4, genre1=$5, genre2=$6 WHERE id=$7 RETURNING *",
-    [name, description, image_url, ratingValue, genre1, genre2, req.params.id]
-  );
+  try {
+    // get current data
+    const current = await pool.query(
+      "SELECT * FROM series WHERE id=$1",
+      [id]
+    );
 
-  res.json(result.rows[0]);
+    if (current.rows.length === 0) {
+      return res.status(404).json({ error: "series not found" });
+    }
+
+    const existing = current.rows[0];
+
+    //only update what was sent
+    const updatedName =
+      typeof name === "string" && name.trim() !== ""
+        ? name
+        : existing.name;
+
+    const updatedDescription =
+      typeof description === "string" && description.trim() !== ""
+        ? description
+        : existing.description;
+
+    const updatedImage =
+      typeof image_url === "string" && image_url.trim() !== ""
+        ? image_url
+        : existing.image_url;
+
+    const updatedRating =
+      typeof rating === "number" && rating >= 0.5 && rating <= 5
+        ? rating
+        : existing.rating;
+
+    const updatedGenre1 =
+      typeof genre1 === "string" && genre1.trim() !== ""
+        ? genre1
+        : existing.genre1;
+
+    const updatedGenre2 =
+      typeof genre2 === "string" && genre2.trim() !== ""
+        ? genre2
+        : existing.genre2;
+
+    // update
+    const result = await pool.query(
+      `UPDATE series 
+       SET name=$1, description=$2, image_url=$3, rating=$4, genre1=$5, genre2=$6
+       WHERE id=$7
+       RETURNING *`,
+      [
+        updatedName,
+        updatedDescription,
+        updatedImage,
+        updatedRating,
+        updatedGenre1,
+        updatedGenre2,
+        id
+      ]
+    );
+
+    res.json(result.rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: err.message });
+  }
 });
+
 
 // DELETE
 app.delete("/series/:id", async (req, res) => {
