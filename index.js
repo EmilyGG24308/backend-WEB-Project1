@@ -7,10 +7,6 @@ app.use(cors());
 app.use(express.json());
 
 app.get("/", (req, res) => {
-  res.json([]);
-});
-
-app.get("/", (req, res) => {
   res.send("ROOT WORKS");
 });
 
@@ -26,6 +22,26 @@ const pool = new Pool({
     : false
 });
 
+const createTable = async () => {
+  try {
+    await pool.query(`
+      CREATE TABLE IF NOT EXISTS series (
+        id SERIAL PRIMARY KEY,
+        name TEXT NOT NULL,
+        description TEXT,
+        image_url TEXT,
+        rating FLOAT,
+        genre1 TEXT,
+        genre2 TEXT
+      );
+    `);
+    console.log("TABLE READY");
+  } catch (err) {
+    console.error("TABLE ERROR:", err);
+  }
+};
+
+createTable();
 
 // ALLL SERIES (get)
 
