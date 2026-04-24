@@ -41,7 +41,7 @@ createTable();
 
 // ALLL SERIES (get)
 
-app.get("/series", async (req, res) => {
+app.get("/", async (req, res) => {
   console.log("HIT /series");
   
 
@@ -78,7 +78,7 @@ app.get("/series", async (req, res) => {
 
 
 //by id
-app.get("/series/:id", async (req, res) => {
+app.get("/:id", async (req, res) => {
   const result = await pool.query(
     "SELECT * FROM series WHERE id=$1",
     [req.params.id]
@@ -92,7 +92,7 @@ app.get("/series/:id", async (req, res) => {
 });
 
 //POST
-app.post("/series", async (req, res) => {
+app.post("/", async (req, res) => {
   try {
     console.log("REQUEST HIT");
 
@@ -122,7 +122,7 @@ app.post("/series", async (req, res) => {
 });
 
 //Put
-app.put("/series/:id", async (req, res) => {
+app.put("//:id", async (req, res) => {
   console.log("BODY RECEIVED:", req.body);
 
   const {id}=req.params;
@@ -199,7 +199,7 @@ app.put("/series/:id", async (req, res) => {
 
 
 // DELETE
-app.delete("/series/:id", async (req, res) => {
+app.delete("/:id", async (req, res) => {
   const result = await pool.query("DELETE FROM series WHERE id=$1 RETURNING *", [req.params.id]);
 
   if (result.rows.length === 0) {
