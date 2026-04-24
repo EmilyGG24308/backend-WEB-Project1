@@ -7,6 +7,10 @@ app.use(cors());
 app.use(express.json());
 
 app.get("/", (req, res) => {
+  res.json([]);
+});
+
+app.get("/", (req, res) => {
   res.send("ROOT WORKS");
 });
 
