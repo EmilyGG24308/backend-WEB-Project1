@@ -18,6 +18,9 @@ const pool = new Pool({
 // ALLL SERIES (get)
 
 app.get("/series", async (req, res) => {
+  console.log("HIT /series");
+  
+
   try {
     const {q, sort = "id", order= "asc", page=1, limit=4}=req.query;
     const validSortFields = ["id", "name", "rating"];
@@ -32,7 +35,7 @@ app.get("/series", async (req, res) => {
   
     //search by name
     if (q){
-      query +="WHERE name ILIKE $1";
+      query +=" WHERE name ILIKE $1";
       values.push(`%${q}%`);
     }
     query += ` ORDER BY ${sortField} ${sortOrder.toUpperCase()} LIMIT $${values.length + 1} OFFSET $${values.length + 2}`;
@@ -183,7 +186,7 @@ app.delete("/series/:id", async (req, res) => {
 });
 
 
-app.listen(3000, () => {
+app.listen(3000, "0.0.0.0", () => {
   console.log("Server running on port 3000");
 });
 
