@@ -6,6 +6,10 @@ const app = express();
 app.use(cors());
 app.use(express.json());
 
+app.get("/", (req, res) => {
+  res.send("ROOT WORKS");
+});
+
 const pool = new Pool({
   connectionString: process.env.DATABASE_URL || undefined,
   user: process.env.DATABASE_URL ? undefined : "postgres",
