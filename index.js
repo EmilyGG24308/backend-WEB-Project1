@@ -122,7 +122,7 @@ app.post("/", async (req, res) => {
 });
 
 //Put
-app.put("//:id", async (req, res) => {
+app.put("/:id", async (req, res) => {
   console.log("BODY RECEIVED:", req.body);
 
   const {id}=req.params;
