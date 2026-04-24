@@ -7,11 +7,15 @@ app.use(cors());
 app.use(express.json());
 
 const pool = new Pool({
-  user: "postgres",
-  host: "localhost",
-  database: "series",
-  password: "1234",
+  connectionString: process.env.DATABASE_URL || undefined,
+  user: process.env.DATABASE_URL ? undefined : "postgres",
+  host: process.env.DATABASE_URL ? undefined : "localhost",
+  database: process.env.DATABASE_URL ? undefined : "series",
+  password: process.env.DATABASE_URL ? undefined : "1234",
   port: 5432,
+  ssl: process.env.DATABASE_URL
+    ? { rejectUnauthorized: false }
+    : false
 });
 
 
