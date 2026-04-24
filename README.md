@@ -1,4 +1,8 @@
 BACKEND
+
+frontend repo: https://github.com/EmilyGG24308/frontend-WEB-Project1/tree/main
+link a pagina: https://emilygg24308.github.io/frontend-WEB-Project1/
+
 <img width="2559" height="1469" alt="image" src="https://github.com/user-attachments/assets/1b1c7f30-b207-4f3d-a197-bba65bad775b" />
 
 Cómo correr el proyecto localmente (Frontend + Backend)
